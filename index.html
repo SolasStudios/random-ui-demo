@@ -11,7 +11,7 @@
   h1 { margin:0 0 4px; } p.sub { margin:0 0 20px; opacity:.7; }
   .bar { display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
   .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; }
-  .card { background:var(--card); border-radius:14px; padding:16px; display:flex; flex-direction:column; gap:10px; }
+  .card { min-width:0; overflow:hidden; background:var(--card); border-radius:14px; padding:16px; display:flex; flex-direction:column; gap:10px; }
   .card h3 { margin:0; font-size:.8rem; text-transform:uppercase; letter-spacing:.08em; opacity:.6; }
   button { background:var(--accent); color:#fff; border:0; border-radius:10px; padding:10px 14px; font-size:1rem; cursor:pointer; }
   button:active { transform:scale(.96); }
@@ -20,6 +20,8 @@
   .scroll { height:120px; overflow:auto; background:#0e1118; border-radius:10px; padding:8px; }
   .scroll div { padding:4px 0; border-bottom:1px solid #222a3a; }
   .out { font-variant-numeric:tabular-nums; font-size:1.4rem; }
+  select { background:#0e1118; color:var(--fg); border:1px solid #2a3350; border-radius:10px; padding:8px; font-size:1rem; }
+  .grid3 button { min-width:0; overflow:hidden; text-overflow:ellipsis; }
   .swatch { height:60px; border-radius:10px; transition:background .2s; }
 </style>
 </head>
@@ -34,6 +36,8 @@
 <script>
 const rnd = (a,b)=>Math.floor(Math.random()*(b-a+1))+a;
 const pick = a=>a[rnd(0,a.length-1)];
+const pickN = (a,n)=>[...a].sort(()=>Math.random()-.5).slice(0,Math.min(n,a.length));
+const textFor = (h,s,l)=>l>58?'#10131a':'#fff';
 const words = ["maple","orbit","ember","quartz","drift","nova","pixel","harbor","lantern","cobalt","fable","zephyr"];
 const grid = document.getElementById('grid');
 
@@ -60,7 +64,7 @@ function render(){
     const out=document.createElement('div'); out.className='out';
     const min=rnd(0,20), max=min+rnd(30,200), s=document.createElement('input');
     s.type='range'; s.min=min; s.max=max; s.value=rnd(min,max);
-    out.textContent=s.value; s.oninput=()=>out.textContent=s.value; c.append(out,s);
+    s.value=s.value; out.textContent=s.value; s.oninput=()=>out.textContent=s.value; c.append(out,s);
   });
   card('Color mixer', c=>{
     const sw=document.createElement('div'); sw.className='swatch';
@@ -84,14 +88,14 @@ function render(){
   });
   card('Dropdown', c=>{
     const sel=document.createElement('select');
-    for(let i=0;i<rnd(3,7);i++){ const o=document.createElement('option'); o.textContent=pick(words); sel.append(o); }
-    const out=document.createElement('div'); out.textContent='Pick one'; sel.onchange=()=>out.textContent='Selected: '+sel.value;
+    pickN(words,rnd(3,7)).forEach(w=>{ const o=document.createElement('option'); o.textContent=w; sel.append(o); });
+    const out=document.createElement('div'); out.textContent='Selected: '+sel.value; sel.onchange=()=>out.textContent='Selected: '+sel.value;
     c.append(sel,out);
   });
   card('Button grid', c=>{
-    const wrap=document.createElement('div'); wrap.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:8px';
+    const wrap=document.createElement('div'); wrap.className='grid3'; wrap.style.cssText='display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px';
     for(let i=0;i<6;i++){ const b=document.createElement('button'); b.className=Math.random()>.5?'ghost':''; b.textContent=pick(words);
-      b.onclick=()=>b.style.background=`hsl(${rnd(0,360)} 70% 55%)`; wrap.append(b); }
+      b.onclick=()=>{ const h=rnd(0,360), l=rnd(30,80); b.style.background=`hsl(${h} 70% ${l}%)`; b.style.color=textFor(h,70,l); b.style.borderColor='transparent'; }; wrap.append(b); }
     c.append(wrap);
   });
 }
