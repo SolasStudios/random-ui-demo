@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Random UI Demo</title>
+<link rel="icon" href="data:,">
 <style>
-  :root { --bg:#10131a; --card:#1a1f2b; --fg:#e8ecf4; --accent:#6c8cff; }
+  :root { color-scheme: dark; --bg:#10131a; --card:#1a1f2b; --fg:#e8ecf4; --accent:#6c8cff; }
   * { box-sizing: border-box; }
   body { margin:0; font-family: system-ui, sans-serif; background:var(--bg); color:var(--fg); padding:24px; }
   h1 { margin:0 0 4px; } p.sub { margin:0 0 20px; opacity:.7; }
@@ -21,7 +22,7 @@
   .scroll div { padding:4px 0; border-bottom:1px solid #222a3a; }
   .out { font-variant-numeric:tabular-nums; font-size:1.4rem; }
   select { background:#0e1118; color:var(--fg); border:1px solid #2a3350; border-radius:10px; padding:8px; font-size:1rem; }
-  .grid3 button { min-width:0; overflow:hidden; text-overflow:ellipsis; }
+  .grid3 button { min-width:0; padding:10px 8px; white-space:normal; overflow-wrap:anywhere; }
   .swatch { height:60px; border-radius:10px; transition:background .2s; }
 </style>
 </head>
@@ -49,8 +50,7 @@ function render(){
   grid.innerHTML='';
   card('Counter button', c=>{
     let n=rnd(0,50); const out=document.createElement('div'); out.className='out'; out.textContent=n;
-    const b=document.createElement('button'); b.textContent=`+${rnd(1,9)}`;
-    const step=parseInt(b.textContent.slice(1));
+    const step=rnd(1,9); const b=document.createElement('button'); b.textContent=`+${step}`;
     b.onclick=()=>{n+=step; out.textContent=n;};
     c.append(out,b);
   });
@@ -93,7 +93,7 @@ function render(){
     c.append(sel,out);
   });
   card('Button grid', c=>{
-    const wrap=document.createElement('div'); wrap.className='grid3'; wrap.style.cssText='display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px';
+    const wrap=document.createElement('div'); wrap.className='grid3'; wrap.style.cssText='display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px';
     for(let i=0;i<6;i++){ const b=document.createElement('button'); b.className=Math.random()>.5?'ghost':''; b.textContent=pick(words);
       b.onclick=()=>{ const h=rnd(0,360), l=rnd(30,80); b.style.background=`hsl(${h} 70% ${l}%)`; b.style.color=textFor(h,70,l); b.style.borderColor='transparent'; }; wrap.append(b); }
     c.append(wrap);
